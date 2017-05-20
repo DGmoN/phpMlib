@@ -1,6 +1,8 @@
 <?php
 require_once($MODULES_ROOT."/phpModules/class.module.php");
 
+if(!isset($MODULES_ROOT)) $MODULES_ROOT = "";
+
 class phpTemplaterModule extends Module{
 	
 	private $PAGE_MANAGER;
