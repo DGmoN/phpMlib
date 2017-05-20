@@ -1,0 +1,9 @@
+[20-5-2017 14-52-35][Modules.php]	Logging enabled
+[20-5-2017 14-52-35][Modules.php]	Reading module config
+[20-5-2017 14-52-35][Modules.php]	Module loading: phpTemplater
+[20-5-2017 14-52-35][Modules.php]	Module ok: phpTemplater
+[20-5-2017 14-52-35][Modules.php]	Module loading: phpAccessController
+[20-5-2017 14-52-35][Modules.php]	Module ok: phpAccessController
+[20-5-2017 14-52-35][Modules.php]	Module config read
+[20-5-2017 14-52-35][module.php]	phpTemplater destructed, freed 0.046875KB
+[20-5-2017 14-52-35][module.php]	phpAccessController unloaded, memory freed: 0.015625KB

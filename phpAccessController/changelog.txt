@@ -1,0 +1,11 @@
+v0.0c
+	-added image asset hole
+	-added File hole
+	-added js page function
+	-added js url to built in urls
+	-added config for certain asspects such as Images and file downloads
+
+v0.0b
+	-added built in urls
+	-added Assets root variable
+	-added suport for underscore in regex
