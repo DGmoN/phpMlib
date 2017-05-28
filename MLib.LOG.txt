@@ -1,9 +1,80 @@
-[20-5-2017 14-52-35][Modules.php]	Logging enabled
-[20-5-2017 14-52-35][Modules.php]	Reading module config
-[20-5-2017 14-52-35][Modules.php]	Module loading: phpTemplater
-[20-5-2017 14-52-35][Modules.php]	Module ok: phpTemplater
-[20-5-2017 14-52-35][Modules.php]	Module loading: phpAccessController
-[20-5-2017 14-52-35][Modules.php]	Module ok: phpAccessController
-[20-5-2017 14-52-35][Modules.php]	Module config read
-[20-5-2017 14-52-35][module.php]	phpTemplater destructed, freed 0.046875KB
-[20-5-2017 14-52-35][module.php]	phpAccessController unloaded, memory freed: 0.015625KB
+[27-5-2017 20-29-21][Modules.php]	Logging enabled
+[27-5-2017 20-29-21][Modules.php]	Reading module config
+[27-5-2017 20-29-21][Modules.php]	Module loading: phpTemplater
+[27-5-2017 20-29-21][Modules.php]	Module ok: phpTemplater
+[27-5-2017 20-29-21][Modules.php]	Module loading: phpAccessController
+[27-5-2017 20-29-21][Modules.php]	Module ok: phpAccessController
+[27-5-2017 20-29-21][Modules.php]	Module loading: phpMySQL
+[27-5-2017 20-29-21][Modules.php]	Module ok: phpMySQL
+[27-5-2017 20-29-21][Modules.php]	Module loading: phpAuth
+[27-5-2017 20-29-21][Modules.php]	Module ok: phpAuth
+[27-5-2017 20-29-21][Modules.php]	Module config read
+[27-5-2017 20-29-21][class.module.php]	Module loaded: phpAuth
+[27-5-2017 20-29-21][class.module.php]	Base memory usage: 0KB
+[27-5-2017 20-29-21][class.module.php]	Adding script: database.php
+[27-5-2017 20-29-21][database.php]	Loading databases
+[27-5-2017 20-29-21][class.module.php]	Module loaded: phpMySQL
+[27-5-2017 20-29-21][class.module.php]	Base memory usage: 38.96875KB
+[27-5-2017 20-29-21][database.php]	attempting loggin in with: 
+USERNAME:	root
+PASSWORD:	
+HOST:	localhost
+
+[27-5-2017 20-29-21][database.php]	Connection established
+[27-5-2017 20-29-21][database.php]	Sending query: SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = 'honinworx'
+[27-5-2017 20-29-21][database.php]	Sending query: SHOW TABLES
+[27-5-2017 20-29-21][database.php]	Tabled registered: viewauth
+[27-5-2017 20-29-21][database.php]	Sending query: SHOW TABLES LIKE 'viewauth'
+[27-5-2017 20-29-21][database.php]	Sending query: SELECT * FROM `INFORMATION_SCHEMA`.`COLUMNS` WHERE `TABLE_SCHEMA`='honinworx' AND `TABLE_NAME`='viewauth'
+[27-5-2017 20-29-21][database.php]	created column: ID int NOT NULL 
+[27-5-2017 20-29-21][database.php]	created column: Username varchar(32) NOT NULL 
+[27-5-2017 20-29-21][database.php]	created column: Password varchar(128) NOT NULL 
+[27-5-2017 20-29-21][database.php]	created column: Sessionkey varchar(128) NOT NULL 
+[27-5-2017 20-29-21][database.php]	created column: Checkin timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' 
+[27-5-2017 20-29-21][database.php]	created column: last_addr varchar(32) NOT NULL 
+[27-5-2017 20-29-21][database.php]	Tabled registered: viewer_auth
+[27-5-2017 20-29-21][database.php]	Sending query: SHOW TABLES LIKE 'viewer_auth'
+[27-5-2017 20-29-21][database.php]	Sending query: SELECT * FROM `INFORMATION_SCHEMA`.`COLUMNS` WHERE `TABLE_SCHEMA`='honinworx' AND `TABLE_NAME`='viewer_auth'
+[27-5-2017 20-29-21][database.php]	created column: ID int NOT NULL 
+[27-5-2017 20-29-21][database.php]	created column: Username varchar(32) NOT NULL 
+[27-5-2017 20-29-21][database.php]	created column: Password varchar(128) NOT NULL 
+[27-5-2017 20-29-21][database.php]	created column: Sessionkey varchar(128) NOT NULL 
+[27-5-2017 20-29-21][database.php]	created column: Checkin timestamp NOT NULL DEFAULT 'CURRENT_TIMESTAMP' 
+[27-5-2017 20-29-21][database.php]	Sending query: ALTER TABLE viewauth ADD Username VARCHAR(32) NOT NULL 
+[27-5-2017 20-29-21][database.php]	Duplicate column name 'Username'
+[27-5-2017 20-29-21][database.php]	Sending query: ALTER TABLE viewauth ADD Password VARCHAR(128) NOT NULL 
+[27-5-2017 20-29-21][database.php]	Duplicate column name 'Password'
+[27-5-2017 20-29-21][database.php]	Sending query: ALTER TABLE viewauth ADD Sessionkey VARCHAR(128) NOT NULL 
+[27-5-2017 20-29-21][database.php]	Duplicate column name 'Sessionkey'
+[27-5-2017 20-29-21][database.php]	Sending query: ALTER TABLE viewauth ADD Checkin TIMESTAMP NOT NULL 
+[27-5-2017 20-29-21][database.php]	Duplicate column name 'Checkin'
+[27-5-2017 20-29-21][database.php]	Sending query: ALTER TABLE viewauth ADD last_addr VARCHAR(32) NOT NULL 
+[27-5-2017 20-29-21][database.php]	Duplicate column name 'last_addr'
+[27-5-2017 20-29-21][class.module.php]	Adding script: url_parser.php
+[27-5-2017 20-29-21][class.module.php]	Module loaded: phpAccessController
+[27-5-2017 20-29-21][class.module.php]	Base memory usage: 8.4375KB
+[27-5-2017 20-29-21][module.php]	Page handler registered: 404
+[27-5-2017 20-29-21][module.php]	Page handler registered: 400
+[27-5-2017 20-29-21][module.php]	Page handler registered: css
+[27-5-2017 20-29-21][module.php]	Page handler registered: js
+[27-5-2017 20-29-21][module.php]	Page handler registered: img
+[27-5-2017 20-29-21][url_parser.php]	Created URL parser
+[27-5-2017 20-29-21][module.php]	attempting to parse url: /css/base_css.css
+[27-5-2017 20-29-21][url_parser.php]	Parsing URL: /css/base_css.css
+[27-5-2017 20-29-21][url_parser.php]	/css/base_css.css->/^(index)$/
+[27-5-2017 20-29-21][url_parser.php]	/css/base_css.css->/^(login)$/
+[27-5-2017 20-29-21][url_parser.php]	/css/base_css.css->/^.*(?P<file>css\/.*)$/
+[27-5-2017 20-29-21][url_parser.php]	Array
+(
+    [0] => Array
+        (
+            [0] => /css/base_css.css
+            [file] => css/base_css.css
+            [1] => css/base_css.css
+        )
+
+)
+
+[27-5-2017 20-29-21][module.php]	phpTemplater destructed, freed 0.046875KB
+[27-5-2017 20-29-21][module.php]	phpAccessController unloaded, memory freed: -3.90625KB
+[27-5-2017 20-29-21][database.php]	SQL connection closed

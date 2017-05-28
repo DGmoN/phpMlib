@@ -31,9 +31,10 @@ class Module{
 		
 		foreach($this->MODULEScripts as $script){
 			__APPEND_LOG("Adding script: ".$script);
+			global $MODULES_ROOT;
 			try{
-				$script_dir = $this->MODULESrc.$script;
-				if(!file_exists($script_dir)) throw new Exception("The script does not exits");
+				$script_dir = $MODULES_ROOT."/".$this->MODULESrc.$script;
+				if(!file_exists($script_dir)) throw new Exception("The script does not exits: ".$script_dir);
 				require_once($script_dir);
 			}catch(Exception $e){
 				__APPEND_LOG("Failed to load script: ".$e->getMessage());

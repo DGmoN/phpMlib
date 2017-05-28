@@ -24,7 +24,7 @@ class URL_Parser{
 			
 			$this->URLS = $URLS;
 		}else{
-			__APPEND_LOG("No pages.txt file found");
+			__APPEND_LOG($url_config.": Not found");
 		}
 		__APPEND_LOG("Created URL parser");
 	}
@@ -35,7 +35,7 @@ class URL_Parser{
 	}
 	
 	function PARESE_URL($URL){
-		if($URL == 'index.php' or $URL =="")
+		if($URL == '/index' or $URL =="/")
 			$URL = "index";
 		__APPEND_LOG("Parsing URL: ".$URL);
 		
@@ -50,7 +50,8 @@ class URL_Parser{
 				return $e;
 			}
 		}
-		return array("TARGET"=>"404", "REQUEST"=> array(array("URL"=>$URL, "REFERER"=>$_SERVER['HTTP_REFERER'])));
+		@$referer = $_SERVER['HTTP_REFERER'];
+		return array("TARGET"=>"404", "REQUEST"=> array(array("URL"=>$URL, "REFERER"=>$referer)));
 	}
 	
 	function __destruct(){

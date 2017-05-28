@@ -7,15 +7,18 @@ class phpAccessControllerModule extends Module{
 	
 	public $URL_DIR;
 	public $PAGE_HANDLERS = array();
-	private $URL_HANDLERS;
+	private $URL_HANDLER;
 	private $HTACCESS = false;
 	private $URL_PARSER = null;
+	public $ASSETS_ROOT;
 	
 	
 	function __construct($json){
 		parent::__construct($json);
 		$this->URL_DIR = $json->URL_DIR;
-		$this->URL_HANDLERS = $json->URL_HANDLERS;
+		$this->URL_HANDLER = $json->URL_HANDLER;
+		global $ASSETS_ROOT;
+		$ASSETS_ROOT = $json->ASSETS_ROOT;
 		
 		$this->HTACCESS = $json->HTACCESS == "true";
 		
@@ -23,8 +26,8 @@ class phpAccessControllerModule extends Module{
 	
 	public function Load(){
 		if($this->LOADED) return 1;
-		if(!file_exists($this->URL_HANDLERS)){
-			__APPEND_LOG("Failed to load ".$this->MODULEName.". URL handler does not exist: ".$this->URL_HANDLERS);
+		if(!file_exists($this->URL_HANDLER)){
+			__APPEND_LOG("Failed to load ".$this->MODULEName.". URL handler does not exist: ".$this->URL_HANDLER);
 			return 0;
 		}
 		
@@ -36,12 +39,14 @@ class phpAccessControllerModule extends Module{
 		if($this->HTACCESS)	$this->prepHtaccess();
 		
 		$this->prepBuiltinFunctions();
-		
-		include($this->URL_HANDLERS);
-		
+				
 		foreach($this->PAGE_HANDLERS as $k=>$P){
 			__APPEND_LOG("Page handler registered: ".$k);
 		}
+		
+		include($this->URL_HANDLER);
+		
+		
 		
 		$this->URL_PARSER = new URL_Parser($this->URL_DIR);
 		$this->LOADED = true;
@@ -51,7 +56,7 @@ class phpAccessControllerModule extends Module{
 	// Appends the predefined page handlers for the module
 	private function prepBuiltinFunctions(){
 		$this->PAGE_HANDLERS['404'] = function($GET = null){
-					return "error 404";
+					echo "Theres nothing here my dude";
 				};
 				
 		$this->PAGE_HANDLERS['400'] = function($GET = null){
@@ -68,7 +73,7 @@ class phpAccessControllerModule extends Module{
 								header('Content-Type: text/css');
 								require($file);
 							}else
-								return "No such asset: ".$ASSETS_ROOT.$GET['URL'];
+								echo "No such asset: ".$ASSETS_ROOT.$GET['REQUEST']['URL'];
 						};
 		$this->PAGE_HANDLERS['js'] = function($GET = null){
 							global $ASSETS_ROOT;
@@ -126,6 +131,10 @@ class phpAccessControllerModule extends Module{
 				$this->PAGE_HANDLERS[$request['TARGET']]($request);
 				return 1;
 		}
+	}
+	
+	function reverse($label, $request){
+		$this->PAGE_HANDLERS[$label]($request);
 	}
 	
 	function __destruct(){
