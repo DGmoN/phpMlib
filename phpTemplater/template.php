@@ -45,6 +45,20 @@ class Pagemanager{
 		}
 	}
 	
+	function get_abstract($label){
+		$str = "page[@label='".$label."']";
+		__APPEND_LOG("Looking up abstract page config: ".$label);
+		$page = $this->XML_DATA->xpath($str);
+		
+		if($page){
+			__APPEND_LOG("Page found");
+			return new Page($page[0], $this, false);
+		}else{
+			__APPEND_LOG("No such page found");
+			return 0;
+		}
+	}
+	
 	function __destruct(){
 		$this->XML_DATA = null;
 		unset($this->XML_DATA);
@@ -56,32 +70,44 @@ class Page{
 	public $MANAGER;
 	private $DOCTYPE = "HTML";
 	private $NODES = array();
+	private $INHERIT = true;
 	
-	function __construct($xml_data, $pman){
+	function __construct($xml_data, $pman, $inherit=true){
 		if(isset($xml_data['doctype'])){
 			$this->DOCTYPE = $xml_data['doctype'];
 		}
+		$this->INHERIT = $inherit;
 		$this->MANAGER = $pman;
 		__APPEND_LOG("Building nodes");
 		foreach($xml_data->node as $node){
 			array_push($this->NODES, new Node($node, $this));
 		}
-		
-		if(@$xml_data['parent']){
-			$parent = $this->MANAGER->get_page($xml_data['parent']);
-			if(@$parent){
-				__APPEND_LOG("Applying parent overwrite.");
-				$this->DOCTYPE = $parent->DOCTYPE;
-				$this->NODES = $parent->apply_child($this);
+		if($this->INHERIT)
+			if(@$xml_data['parent']){
+				$parent = $this->MANAGER->get_page($xml_data['parent']);
+				if(@$parent){
+					__APPEND_LOG("Applying parent overwrite.");
+					$this->DOCTYPE = $parent->DOCTYPE;
+					$this->NODES = $parent->apply_child($this);
+				}
 			}
-		}
 	}
 	
 	function render($context){
 		__APPEND_LOG("Rendering page");
-		echo "<!DOCTYPE ".$this->DOCTYPE.">";
+		if($this->INHERIT)
+			echo "<!DOCTYPE ".$this->DOCTYPE.">";
+		
 		foreach($this->NODES as $n){
-			$n->render($context);
+			if(!$this->INHERIT){ 
+				header('context: '.json_encode($context));
+				echo(json_encode($n->OVERWRITE)."|");				
+				$n->render($context); 
+				echo "||";
+			}else{
+				$n->render($context);
+			}
+			
 		}
 
 	}
@@ -205,7 +231,7 @@ class Node{
 			case 'alt':
 				$this->TYPE = $object->TYPE;
 				$this->META_ARGS = $object->META_ARGS;
-				
+				$this->CHILDREN = $object->CHILDREN;
 				break;
 		}
 	}
@@ -226,7 +252,7 @@ class Node{
 					echo "id='".$this->ID."'";
 				
 				if($this->CLASS)
-					echo "class='".$this->CLASS."'";
+					echo 'class="'.$this->CLASS.'"';
 				
 				echo $this->META_ARGS.">";
 				
@@ -246,6 +272,48 @@ class Node{
 				break;
 		}
 	}
+	
+	function get_abstract(){
+		
+		$str = "";
+		
+		switch($this->TYPE){
+			case "part":
+				foreach($this->CHILDREN as $c){
+					$str.=$c->get_abstract($context);
+				}
+				break;
+			case "static":
+
+				$str.= "<".$this->CONTEXT_VALUE." ";
+				
+				if($this->ID)
+					$str.= "id='".$this->ID."'";
+				
+				if($this->CLASS)
+					$str.= 'class="'.$this->CLASS.'"';
+				
+				$str.= $this->META_ARGS.">";
+				
+				foreach($this->CHILDREN as $c){
+					$str.=$c->get_abstract($context);
+				}
+								
+				$str.= "</".$this->CONTEXT_VALUE.">";
+				break;
+								
+			case "asset":
+				$str.= readfile($this->PAGE->MANAGER->ASSETS_ROOT.$this->CONTEXT_VALUE);
+				break;
+			
+			case "text":
+				$str.=$this->CONTEXT_VALUE;
+				break;
+		}
+		
+		return $str;
+	}
+	
 	
 	function __destruct(){
 		unset($this->CHILDREN);

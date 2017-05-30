@@ -56,7 +56,7 @@ class phpAccessControllerModule extends Module{
 	// Appends the predefined page handlers for the module
 	private function prepBuiltinFunctions(){
 		$this->PAGE_HANDLERS['404'] = function($GET = null){
-					echo "Theres nothing here my dude";
+					die("Theres nothing here my dude");
 				};
 				
 		$this->PAGE_HANDLERS['400'] = function($GET = null){
@@ -82,7 +82,7 @@ class phpAccessControllerModule extends Module{
 								global $ASSETS_ROOT;
 								include($file);
 							}else
-								return "No such asset: ".$ASSETS_ROOT.$GET['URL'];
+								return "No such asset: ".$ASSETS_ROOT.$GET['REQUEST']['URL'];
 						};
 		$this->PAGE_HANDLERS['img'] = function($GET = null){
 							global $ASSETS_ROOT;
@@ -98,8 +98,9 @@ class phpAccessControllerModule extends Module{
 															
 								#include($ASSETS_ROOT."/img/".$GET);
 							}else
-								return "No such asset: ".$ASSETS_ROOT.$GET['URL'];
+								return "No such asset: ".$ASSETS_ROOT.$GET['REQUEST']['URL'];
 						};
+										
 	}
 	
 	private function prepHtaccess(){
@@ -130,6 +131,11 @@ class phpAccessControllerModule extends Module{
 				$request = $this->URL_PARSER->PARESE_URL($args['url']);
 				$this->PAGE_HANDLERS[$request['TARGET']]($request);
 				return 1;
+			case "remote_render":
+				__APPEND_LOG("attempting to parse request: ".$args['url']);
+				$request = $this->URL_PARSER->PARESE_URL($args['url']);
+				$request['REQUEST']['TYPE'] = "REMOTE";
+				$this->PAGE_HANDLERS[$request['TARGET']]($request);
 		}
 	}
 	

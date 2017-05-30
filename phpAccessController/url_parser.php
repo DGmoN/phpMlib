@@ -35,8 +35,8 @@ class URL_Parser{
 	}
 	
 	function PARESE_URL($URL){
-		if($URL == '/index' or $URL =="/")
-			$URL = "index";
+		if($URL == '/index' or $URL =="/" or $URL=='')
+			$URL = "/index/";
 		__APPEND_LOG("Parsing URL: ".$URL);
 		
 		foreach($this->URLS as $k=>$v){
@@ -45,13 +45,13 @@ class URL_Parser{
 				__APPEND_LOG(print_r($matches, true));
 				
 				$e = $v;
-				@$e["REQUEST"] = array("URL"=>$URL, "REFERER"=>$_SERVER['HTTP_REFERER']);
+				@$e["REQUEST"] = array("URL"=>$URL, "REFERER"=>$_SERVER['HTTP_REFERER'], "TYPE"=>"DIRECT");
 				$e["MATCHES"] = $matches;
 				return $e;
 			}
 		}
 		@$referer = $_SERVER['HTTP_REFERER'];
-		return array("TARGET"=>"404", "REQUEST"=> array(array("URL"=>$URL, "REFERER"=>$referer)));
+		return array("TARGET"=>"404", "REQUEST"=> array("URL"=>$URL, "REFERER"=>$referer, "TYPE"=>"DIRECT"));
 	}
 	
 	function __destruct(){
