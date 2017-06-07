@@ -4,7 +4,7 @@ require_once($MODULES_ROOT."/phpModules/class.module.php");
 if(!isset($MODULES_ROOT)) $MODULES_ROOT = "";
 
 class phpAccessControllerModule extends Module{
-	
+		
 	public $URL_DIR;
 	public $PAGE_HANDLERS = array();
 	private $URL_HANDLER;
@@ -12,6 +12,8 @@ class phpAccessControllerModule extends Module{
 	private $URL_PARSER = null;
 	public $ASSETS_ROOT;
 	
+	private $REGISTRY = array();
+	private $REGISTRY_ROOT = null;
 	
 	function __construct($json){
 		parent::__construct($json);
@@ -19,7 +21,7 @@ class phpAccessControllerModule extends Module{
 		$this->URL_HANDLER = $json->URL_HANDLER;
 		global $ASSETS_ROOT;
 		$ASSETS_ROOT = $json->ASSETS_ROOT;
-		
+		$this->REGISTRY_ROOT = $json->REGISTRY;
 		$this->HTACCESS = $json->HTACCESS == "true";
 		
 	}
@@ -50,8 +52,34 @@ class phpAccessControllerModule extends Module{
 		
 		$this->URL_PARSER = new URL_Parser($this->URL_DIR);
 		$this->LOADED = true;
+		
+		$files = scandir($this->REGISTRY_ROOT);
+
+		foreach($files as $f){
+			if($f != "." && $f != ".."){
+				require($this->REGISTRY_ROOT.$f);
+				register($this);
+			}
+		}
 	}
 	
+	
+	// Registers a url and its handler to the registry
+	// Registry looks like:
+	//			[ID:	(REX, HANDLER)]
+	
+	function register_handler($regex, $handler, $ID=null){
+		
+		$pair = array("REX" => "/".$regex."/", "HANDLER"=>$handler);
+		if($ID)
+			$this->REGISTRY[$ID] = $pair;
+		else
+			array_push($this->REGISTRY, $pair);
+		
+		$ID = count($this->REGISTRY);
+		
+		__APPEND_LOG("RegisteredURL: ".$pair["REX"]);
+	}
 	
 	// Appends the predefined page handlers for the module
 	private function prepBuiltinFunctions(){
@@ -131,12 +159,36 @@ class phpAccessControllerModule extends Module{
 				$request = $this->URL_PARSER->PARESE_URL($args['url']);
 				$this->PAGE_HANDLERS[$request['TARGET']]($request);
 				return 1;
+				break;
 			case "remote_render":
 				__APPEND_LOG("attempting to parse request: ".$args['url']);
 				$request = $this->URL_PARSER->PARESE_URL($args['url']);
 				$request['REQUEST']['TYPE'] = "REMOTE";
 				$this->PAGE_HANDLERS[$request['TARGET']]($request);
+				break;
+				
+			case "demo":
+				__APPEND_LOG("attempting to parse url: ".$args['url']);
+				$request = $this->parse($args['url']);			
 		}
+	}
+	
+	private function parse($URL){
+		__APPEND_LOG("Parsing URL: ".$URL);
+		
+		foreach($this->REGISTRY as $k=>$v){
+			__APPEND_LOG($URL."->".$v['REX']);
+			if(preg_match_all($v["REX"], $URL, $matches, PREG_SET_ORDER, 0)){
+				__APPEND_LOG(print_r($matches, true));
+				
+				$e = $v;
+				@$e["REQUEST"] = array("URL"=>$URL, "REFERER"=>$_SERVER['HTTP_REFERER'], "TYPE"=>"DIRECT");
+				$e["MATCHES"] = $matches;
+				return $e;
+			}
+		}
+		@$referer = $_SERVER['HTTP_REFERER'];
+		return array("TARGET"=>"404", "REQUEST"=> array("URL"=>$URL, "REFERER"=>$referer, "TYPE"=>"DIRECT"));
 	}
 	
 	function reverse($label, $request){

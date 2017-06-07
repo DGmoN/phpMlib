@@ -65,28 +65,82 @@ class Pagemanager{
 	}
 }
 
+class headObject{
+	
+	public $TYPE;
+	public $META;
+	
+	private $rendered = false;
+	
+	function __construct($xml){
+		
+		$this->TYPE = $xml->getName();
+		$this->META = $xml->attributes();
+		__APPEND_LOG("created head object: ".$this->TYPE);
+	}
+	
+	function render_header(){
+		
+		if($this->rendered)
+			return "";
+		$this->rendered = true;
+		
+		switch($this->TYPE){
+			case "stylesheet":
+				return "<link rel='stylesheet' type='text/css' href='".$this->META['href']."'>";
+				
+			case "script":
+				$ret = "";
+				foreach($this->META as $k=>$v){
+					$ret .= $k."='".$v."' ";
+				}
+				return "<script ".$ret."></script>";
+			
+			case "link":
+				$ret = "";
+				foreach($this->META as $k=>$v){
+					$ret .= $k."='".$v."' ";
+				}
+				return "<link ".$ret.">";
+			
+			case "title":
+				return "<title>".$this->META['text']."</title>";
+		}
+			
+	}
+	
+}
+
 class Page{
 	
 	public $MANAGER;
 	private $DOCTYPE = "HTML";
 	private $NODES = array();
-	private $INHERIT = true;
+	private $IS_ABSTRACT = true;
+	private $HEAD = array();
+	
 	
 	function __construct($xml_data, $pman, $inherit=true){
 		if(isset($xml_data['doctype'])){
 			$this->DOCTYPE = $xml_data['doctype'];
 		}
-		$this->INHERIT = $inherit;
+		$this->IS_ABSTRACT = $inherit;
 		$this->MANAGER = $pman;
 		__APPEND_LOG("Building nodes");
-		foreach($xml_data->node as $node){
+		foreach($xml_data->abstract->node as $node){
 			array_push($this->NODES, new Node($node, $this));
 		}
-		if($this->INHERIT)
+		
+		foreach($xml_data->head->children() as $head){
+			array_push($this->HEAD, new headObject($head));
+		}
+		
+		if($this->IS_ABSTRACT)
 			if(@$xml_data['parent']){
 				$parent = $this->MANAGER->get_page($xml_data['parent']);
 				if(@$parent){
 					__APPEND_LOG("Applying parent overwrite.");
+					$this->HEAD = array_merge($this->HEAD, $parent->HEAD);
 					$this->DOCTYPE = $parent->DOCTYPE;
 					$this->NODES = $parent->apply_child($this);
 				}
@@ -95,21 +149,48 @@ class Page{
 	
 	function render($context){
 		__APPEND_LOG("Rendering page");
-		if($this->INHERIT)
-			echo "<!DOCTYPE ".$this->DOCTYPE.">";
 		
-		foreach($this->NODES as $n){
-			if(!$this->INHERIT){ 
+		
+		foreach($this->NODES as $node){
+			if(!$this->IS_ABSTRACT){ 
 				header('context: '.json_encode($context));
 				echo(json_encode($n->OVERWRITE)."|");				
 				$n->render($context); 
 				echo "||";
 			}else{
-				$n->render($context);
+				
+				__APPEND_LOG("Rendering Page: HEADER: ".json_encode($this->HEAD)."--".count($this->HEAD));
+				echo "<!DOCTYPE ".$this->DOCTYPE.">";
+				echo "<html>";
+				echo 	"<head>";
+				foreach($this->HEAD as $h){
+					echo $h->render_header();
+				}
+				echo 	"</head>";
+				echo 	"<body>";
+				
+				$node->render($context);
+				echo 	"</body>";
+				echo "</html>";
 			}
 			
 		}
-
+	}
+	
+	function get_abstract($context){
+		$head = json_encode($this->HEAD);
+		$body = json_encode($this->render_abstract($context));
+		return array("HEAD"=>$head, "BODY"=>$body);
+	}
+	
+	function render_abstract($context){
+		$abstract = array();
+		foreach($this->NODES as $N){
+			$data = json_encode($N->get_abstract($context));
+			$overwite = json_encode($N->OVERWRITE);
+			array_push($abstract, array("OVERWRITE"=>$overwite, "DATA"=>$data));
+		}
+		return $abstract;
 	}
 		
 	function apply_child($page){
@@ -141,7 +222,6 @@ class Node{
 		$this->TYPE = $typedata[0];
 		$this->CONTEXT_VALUE = $typedata[1];
 		$this->META_ARGS = $xml_data['meta_args'];
-		__APPEND_LOG("Building node: ".$this->TYPE);
 		$this->CLASS = $xml_data['class'];
 		$this->ID = $xml_data['id'];
 		
@@ -256,8 +336,8 @@ class Node{
 				
 				echo $this->META_ARGS.">";
 				
-				foreach($this->CHILDREN as $c){
-					$c->render($context);
+				foreach($this->CHILDREN as $D){
+					$D->render($context);
 				}
 								
 				echo "</".$this->CONTEXT_VALUE.">";
@@ -273,7 +353,7 @@ class Node{
 		}
 	}
 	
-	function get_abstract(){
+	function get_abstract($context=array()){
 		
 		$str = "";
 		
@@ -303,7 +383,13 @@ class Node{
 				break;
 								
 			case "asset":
-				$str.= readfile($this->PAGE->MANAGER->ASSETS_ROOT.$this->CONTEXT_VALUE);
+			
+				ob_start();
+				include($this->PAGE->MANAGER->ASSETS_ROOT.$this->CONTEXT_VALUE);
+				$returned = ob_get_contents();
+				ob_end_clean();
+			
+				$str.= $returned;
 				break;
 			
 			case "text":

@@ -1,43 +1,35 @@
-[28-5-2017 21-33-58][Modules.php]	Logging enabled
-[28-5-2017 21-33-58][Modules.php]	Reading module config
-[28-5-2017 21-33-58][Modules.php]	Module loading: phpTemplater
-[28-5-2017 21-33-58][Modules.php]	Module ok: phpTemplater
-[28-5-2017 21-33-58][Modules.php]	Module loading: phpAccessController
-[28-5-2017 21-33-58][Modules.php]	Module ok: phpAccessController
-[28-5-2017 21-33-58][Modules.php]	Module loading: phpMySQL
-[28-5-2017 21-33-58][Modules.php]	Module ok: phpMySQL
-[28-5-2017 21-33-58][Modules.php]	Module loading: phpAuth
-[28-5-2017 21-33-58][Modules.php]	Module ok: phpAuth
-[28-5-2017 21-33-58][Modules.php]	Module config read
-[28-5-2017 21-33-58][class.module.php]	Adding script: url_parser.php
-[28-5-2017 21-33-58][class.module.php]	Module loaded: phpAccessController
-[28-5-2017 21-33-58][class.module.php]	Base memory usage: 9.65625KB
-[28-5-2017 21-33-58][module.php]	Page handler registered: 404
-[28-5-2017 21-33-58][module.php]	Page handler registered: 400
-[28-5-2017 21-33-58][module.php]	Page handler registered: css
-[28-5-2017 21-33-58][module.php]	Page handler registered: js
-[28-5-2017 21-33-58][module.php]	Page handler registered: img
-[28-5-2017 21-33-58][url_parser.php]	Created URL parser
-[28-5-2017 21-33-58][module.php]	attempting to parse url: /img/Backgrounds/Contact.jpg
-[28-5-2017 21-33-58][url_parser.php]	Parsing URL: /img/Backgrounds/Contact.jpg
-[28-5-2017 21-33-58][url_parser.php]	/img/Backgrounds/Contact.jpg->/^[\/](index)[\/]$/
-[28-5-2017 21-33-58][url_parser.php]	/img/Backgrounds/Contact.jpg->/^[\/](gallery)$/
-[28-5-2017 21-33-58][url_parser.php]	/img/Backgrounds/Contact.jpg->/^[\/](about)$/
-[28-5-2017 21-33-58][url_parser.php]	/img/Backgrounds/Contact.jpg->/^[\/](contact)$/
-[28-5-2017 21-33-58][url_parser.php]	/img/Backgrounds/Contact.jpg->/^[\/](story)$/
-[28-5-2017 21-33-58][url_parser.php]	/img/Backgrounds/Contact.jpg->/^.*(?P<file>css\/.*)$/
-[28-5-2017 21-33-58][url_parser.php]	/img/Backgrounds/Contact.jpg->/^.*(?P<file>js\/.*)$/
-[28-5-2017 21-33-58][url_parser.php]	/img/Backgrounds/Contact.jpg->/^.*(?P<file>img\/.*)$/
-[28-5-2017 21-33-58][url_parser.php]	Array
+[7-6-2017 20-50-00][Modules.php]	Logging enabled
+[7-6-2017 20-50-00][Modules.php]	Reading module config
+[7-6-2017 20-50-00][Modules.php]	Module loading: phpTemplater
+[7-6-2017 20-50-00][Modules.php]	Module ok: phpTemplater
+[7-6-2017 20-50-00][Modules.php]	Module loading: phpAccessController
+[7-6-2017 20-50-00][Modules.php]	Module ok: phpAccessController
+[7-6-2017 20-50-00][Modules.php]	Module loading: phpMySQL
+[7-6-2017 20-50-00][Modules.php]	Module ok: phpMySQL
+[7-6-2017 20-50-00][Modules.php]	Module loading: phpAuth
+[7-6-2017 20-50-00][Modules.php]	Module ok: phpAuth
+[7-6-2017 20-50-00][Modules.php]	Module config read
+[7-6-2017 20-50-00][class.module.php]	Adding script: url_parser.php
+[7-6-2017 20-50-00][class.module.php]	Module loaded: phpAccessController
+[7-6-2017 20-50-00][class.module.php]	Base memory usage: 9.65625KB
+[7-6-2017 20-50-00][module.php]	Page handler registered: 404
+[7-6-2017 20-50-00][module.php]	Page handler registered: 400
+[7-6-2017 20-50-00][module.php]	Page handler registered: css
+[7-6-2017 20-50-00][module.php]	Page handler registered: js
+[7-6-2017 20-50-00][module.php]	Page handler registered: img
+[7-6-2017 20-50-00][url_parser.php]	Created URL parser
+[7-6-2017 20-50-00][module.php]	RegisteredURL: /(^\/index$)|(^\/$)|(^\/index.php$)/
+[7-6-2017 20-50-00][module.php]	RegisteredURL: /(^\/snoop.php$)/
+[7-6-2017 20-50-00][module.php]	attempting to parse url: /index
+[7-6-2017 20-50-00][module.php]	Parsing URL: /index
+[7-6-2017 20-50-00][module.php]	/index->/(^\/index$)|(^\/$)|(^\/index.php$)/
+[7-6-2017 20-50-00][module.php]	Array
 (
     [0] => Array
         (
-            [0] => /img/Backgrounds/Contact.jpg
-            [file] => img/Backgrounds/Contact.jpg
-            [1] => img/Backgrounds/Contact.jpg
+            [0] => /index
+            [1] => /index
         )
 
 )
 
-[28-5-2017 21-33-58][module.php]	phpTemplater destructed, freed 0.046875KB
-[28-5-2017 21-33-58][module.php]	phpAccessController unloaded, memory freed: -5.8359375KB

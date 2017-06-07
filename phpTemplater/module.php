@@ -36,8 +36,10 @@ class phpTemplaterModule extends Module{
 		switch($create){
 			case "page":
 				return $this->PAGE_MANAGER->get_page($args['LABEL']);
+				break;
 			case "abstract":
 				return $this->PAGE_MANAGER->get_abstract($args['LABEL']);
+				break;
 		}
 	}
 	
