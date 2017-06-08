@@ -1,13 +1,12 @@
 <?php
 require_once($MODULES_ROOT."/phpModules/class.module.php");
+require_once("phpMlib/phpAccessController/parser.class.php");
 
 if(!isset($MODULES_ROOT)) $MODULES_ROOT = "";
 
 class phpAccessControllerModule extends Module{
 		
 	public $URL_DIR;
-	public $PAGE_HANDLERS = array();
-	private $URL_HANDLER;
 	private $HTACCESS = false;
 	private $URL_PARSER = null;
 	public $ASSETS_ROOT;
@@ -17,8 +16,6 @@ class phpAccessControllerModule extends Module{
 	
 	function __construct($json){
 		parent::__construct($json);
-		$this->URL_DIR = $json->URL_DIR;
-		$this->URL_HANDLER = $json->URL_HANDLER;
 		global $ASSETS_ROOT;
 		$ASSETS_ROOT = $json->ASSETS_ROOT;
 		$this->REGISTRY_ROOT = $json->REGISTRY;
@@ -28,39 +25,23 @@ class phpAccessControllerModule extends Module{
 	
 	public function Load(){
 		if($this->LOADED) return 1;
-		if(!file_exists($this->URL_HANDLER)){
-			__APPEND_LOG("Failed to load ".$this->MODULEName.". URL handler does not exist: ".$this->URL_HANDLER);
-			return 0;
-		}
-		
-		
+
 		parent::Load();
-		
-		
-		
+
 		if($this->HTACCESS)	$this->prepHtaccess();
 		
 		$this->prepBuiltinFunctions();
-				
-		foreach($this->PAGE_HANDLERS as $k=>$P){
-			__APPEND_LOG("Page handler registered: ".$k);
-		}
-		
-		include($this->URL_HANDLER);
-		
-		
-		
-		$this->URL_PARSER = new URL_Parser($this->URL_DIR);
-		$this->LOADED = true;
-		
+						
 		$files = scandir($this->REGISTRY_ROOT);
 
 		foreach($files as $f){
 			if($f != "." && $f != ".."){
 				require($this->REGISTRY_ROOT.$f);
-				register($this);
+				$register($this);
 			}
 		}
+		
+		$this->LOADED = true;
 	}
 	
 	
@@ -83,52 +64,8 @@ class phpAccessControllerModule extends Module{
 	
 	// Appends the predefined page handlers for the module
 	private function prepBuiltinFunctions(){
-		$this->PAGE_HANDLERS['404'] = function($GET = null){
-					die("Theres nothing here my dude");
-				};
-				
-		$this->PAGE_HANDLERS['400'] = function($GET = null){
-							__APPEND_LOG(print_r($GET, true));
-							return "400:Its a dead link ".$GET;
-						};
-						
-		$this->PAGE_HANDLERS['css'] = function($GET = null){
-							global $ASSETS_ROOT;
-							$file = $ASSETS_ROOT.$GET['MATCHES'][0]['file'];
-							if(file_exists($file)){
-								
-								global $ASSETS_ROOT;
-								header('Content-Type: text/css');
-								require($file);
-							}else
-								echo "No such asset: ".$ASSETS_ROOT.$GET['REQUEST']['URL'];
-						};
-		$this->PAGE_HANDLERS['js'] = function($GET = null){
-							global $ASSETS_ROOT;
-							$file = $ASSETS_ROOT.$GET['MATCHES'][0]['file'];
-							if(file_exists($file)){
-								global $ASSETS_ROOT;
-								include($file);
-							}else
-								return "No such asset: ".$ASSETS_ROOT.$GET['REQUEST']['URL'];
-						};
-		$this->PAGE_HANDLERS['img'] = function($GET = null){
-							global $ASSETS_ROOT;
-							
-							$file = $ASSETS_ROOT.$GET['MATCHES'][0]['file'];
-							if(file_exists($file)){
-								global $ASSETS_ROOT;
-								
-								$remoteImage = $file;
-								$imginfo = getimagesize($remoteImage);
-								header("Content-type: {$imginfo['mime']}");
-								readfile($remoteImage);
-															
-								#include($ASSETS_ROOT."/img/".$GET);
-							}else
-								return "No such asset: ".$ASSETS_ROOT.$GET['REQUEST']['URL'];
-						};
-										
+		require("built_in_handlers.php");
+		$register($this);									
 	}
 	
 	private function prepHtaccess(){
@@ -169,10 +106,13 @@ class phpAccessControllerModule extends Module{
 				
 			case "demo":
 				__APPEND_LOG("attempting to parse url: ".$args['url']);
-				$request = $this->parse($args['url']);			
+				$request = $this->parse($args['url']);	
+				$request['HANDLER']->handle($request);
 		}
 	}
 	
+	
+	// The new parser, not that new really
 	private function parse($URL){
 		__APPEND_LOG("Parsing URL: ".$URL);
 		
@@ -187,8 +127,12 @@ class phpAccessControllerModule extends Module{
 				return $e;
 			}
 		}
+		
 		@$referer = $_SERVER['HTTP_REFERER'];
-		return array("TARGET"=>"404", "REQUEST"=> array("URL"=>$URL, "REFERER"=>$referer, "TYPE"=>"DIRECT"));
+		$cont = $this->REGISTRY["404"];
+		$cont["REQUEST"] = array("URL"=>$URL, "REFERER"=>$referer, "TYPE"=>"DIRECT");
+		
+		return $cont;
 	}
 	
 	function reverse($label, $request){
