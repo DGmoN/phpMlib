@@ -1,410 +1,56 @@
 <?php 
 
-/*		XML FORMAT
-<xml>
-	<page label='index'> 																					#the page will be used as it is
-		<assets>
-			<asset type='css/script...' name='filename' />
-		</assets>
-		<node type="asset-(path)/static-(tag)/part-(path)/text-(text)" id='element_id' class='element_class' meta_args="arg;arg2"/>
-	</page>
+class Template{
 	
-	<page label='label' parent='parent_url'>																#the page nodes will be applied to its parent e.g. index
-		<assets>
-			<asset type='css/script...' name='filename' />
-		</assets>
-		
-		<node type="asset-(path)/page-(url)/static-(tag)/text-(text)" id='element_id' class='element_class' meta_args="arg;arg2" overwite='element_path-pr/po/rp'/>
-	</page>
-</xml>
-*/
-
-
-
-class Pagemanager{
+	private $TFILE, $TROOT;
 	
-	private $XML_DATA;
-	public $ASSETS_ROOT;
-	
-	function __construct($xml_data, $asset_root){
-		$this->XML_DATA = $xml_data;
-		$this->ASSETS_ROOT = $asset_root;
+	function __construct($root, $file){
+		$this->TROOT = $root;
+		$this->TFILE = $file;
 	}
 	
-	function get_page($label){
-		$str = "page[@label='".$label."']";
-		__APPEND_LOG("Looking up page config: ".$label);
-		$page = $this->XML_DATA->xpath($str);
+	// Renders the page contents
+	function render($context=array()){
+		// Creates the context variables
+		$CONTEXT = $context;
 		
-		if($page){
-			__APPEND_LOG("Page found");
-			return new Page($page[0], $this);
+		// The instance referer
+		$SRC = $this;
+		
+		// renders the file and stores contnt
+		ob_start();
+		include($this->TROOT. $this->TFILE);
+		$returned = ob_get_contents();
+		ob_end_clean();  
+		
+		// If there is a parent then it applies this to the parent
+		if(isset($parent)){
+			
+			$CONTEXT[$parent[1]] = $returned;
+			
+			ob_start();
+			include($this->TROOT.$parent[0]);
+			$returned = ob_get_contents();
+			ob_end_clean();  
+		}
+		
+		
+		echo $returned;
+	}
+	
+	function child($CONTEXT, $ID){
+		if(isset($CONTEXT[$ID])){
+			return $CONTEXT[$ID];
 		}else{
-			__APPEND_LOG("No such page found");
-			return 0;
+			ob_start();
+			include($this->TROOT.$ID);
+			$returned = ob_get_contents();
+			ob_end_clean();  		
+			return $returned;
 		}
-	}
-	
-	function get_abstract($label){
-		$str = "page[@label='".$label."']";
-		__APPEND_LOG("Looking up abstract page config: ".$label);
-		$page = $this->XML_DATA->xpath($str);
-		
-		if($page){
-			__APPEND_LOG("Page found");
-			return new Page($page[0], $this, false);
-		}else{
-			__APPEND_LOG("No such page found");
-			return 0;
-		}
-	}
-	
-	function __destruct(){
-		$this->XML_DATA = null;
-		unset($this->XML_DATA);
-	}
-}
-
-class headObject{
-	
-	public $TYPE;
-	public $META;
-	
-	private $rendered = false;
-	
-	function __construct($xml){
-		
-		$this->TYPE = $xml->getName();
-		$this->META = $xml->attributes();
-		__APPEND_LOG("created head object: ".$this->TYPE);
-	}
-	
-	function render_header(){
-		
-		if($this->rendered)
-			return "";
-		$this->rendered = true;
-		
-		switch($this->TYPE){
-			case "stylesheet":
-				return "<link rel='stylesheet' type='text/css' href='".$this->META['href']."'>";
-				
-			case "script":
-				$ret = "";
-				foreach($this->META as $k=>$v){
-					$ret .= $k."='".$v."' ";
-				}
-				return "<script ".$ret."></script>";
-			
-			case "link":
-				$ret = "";
-				foreach($this->META as $k=>$v){
-					$ret .= $k."='".$v."' ";
-				}
-				return "<link ".$ret.">";
-			
-			case "title":
-				return "<title>".$this->META['text']."</title>";
-		}
-			
 	}
 	
 }
 
-class Page{
-	
-	public $MANAGER;
-	private $DOCTYPE = "HTML";
-	private $NODES = array();
-	private $IS_ABSTRACT = true;
-	private $HEAD = array();
-	
-	
-	function __construct($xml_data, $pman, $inherit=true){
-		if(isset($xml_data['doctype'])){
-			$this->DOCTYPE = $xml_data['doctype'];
-		}
-		$this->IS_ABSTRACT = $inherit;
-		$this->MANAGER = $pman;
-		__APPEND_LOG("Building nodes");
-		foreach($xml_data->abstract->node as $node){
-			array_push($this->NODES, new Node($node, $this));
-		}
-		
-		foreach($xml_data->head->children() as $head){
-			array_push($this->HEAD, new headObject($head));
-		}
-		
-		if($this->IS_ABSTRACT)
-			if(@$xml_data['parent']){
-				$parent = $this->MANAGER->get_page($xml_data['parent']);
-				if(@$parent){
-					__APPEND_LOG("Applying parent overwrite.");
-					$this->HEAD = array_merge($this->HEAD, $parent->HEAD);
-					$this->DOCTYPE = $parent->DOCTYPE;
-					$this->NODES = $parent->apply_child($this);
-				}
-			}
-	}
-	
-	function render($context){
-		__APPEND_LOG("Rendering page");
-		
-		
-		foreach($this->NODES as $node){
-			if(!$this->IS_ABSTRACT){ 
-				header('context: '.json_encode($context));
-				echo(json_encode($n->OVERWRITE)."|");				
-				$n->render($context); 
-				echo "||";
-			}else{
-				
-				__APPEND_LOG("Rendering Page: HEADER: ".json_encode($this->HEAD)."--".count($this->HEAD));
-				echo "<!DOCTYPE ".$this->DOCTYPE.">";
-				echo "<html>";
-				echo 	"<head>";
-				foreach($this->HEAD as $h){
-					echo $h->render_header();
-				}
-				echo 	"</head>";
-				echo 	"<body>";
-				
-				$node->render($context);
-				echo 	"</body>";
-				echo "</html>";
-			}
-			
-		}
-	}
-	
-	function get_abstract($context){
-		$head = json_encode($this->HEAD);
-		$body = json_encode($this->render_abstract($context));
-		return array("HEAD"=>$head, "BODY"=>$body);
-	}
-	
-	function render_abstract($context){
-		$abstract = array();
-		foreach($this->NODES as $N){
-			$data = json_encode($N->get_abstract($context));
-			$overwite = json_encode($N->OVERWRITE);
-			array_push($abstract, array("OVERWRITE"=>$overwite, "DATA"=>$data));
-		}
-		return $abstract;
-	}
-		
-	function apply_child($page){
-		__APPEND_LOG("Applying overwrite to children");
-		foreach($page->NODES as $n){
-			$path = explode("/",$n->OVERWRITE[0]);
-			$path= array_reverse($path);
-			$this->NODES[0]->overwrite($path, $n->OVERWRITE[1], $n);
-		}
-		
-		return $this->NODES;
-	}
-	
-	function __destruct(){
-		unset($this->MANAGER);
-		unset($this->NODES);
-	}
-}
 
-class Node{
-	
-	private $TYPE, $META_ARGS, $PAGE;
-	public $ID, $CLASS, $OVERWRITE, $CHILDREN = array(), $CONTEXT_VALUE;
-	
-	function __construct($xml_data, $Page){
-		
-		$typedata = explode("-",$xml_data['type']);
-		$this->PAGE = $Page;
-		$this->TYPE = $typedata[0];
-		$this->CONTEXT_VALUE = $typedata[1];
-		$this->META_ARGS = $xml_data['meta_args'];
-		$this->CLASS = $xml_data['class'];
-		$this->ID = $xml_data['id'];
-		
-		if($xml_data['overwrite']){
-			
-			$this->OVERWRITE = explode('-',$xml_data['overwrite']);
-			__APPEND_LOG("Overwrite found: ".print_r($this->OVERWRITE, true));
-		}
-		
-		
-		if($this->TYPE=="part"){
-			$xml = simplexml_load_file("assets/".$this->CONTEXT_VALUE.".xml");
-			foreach($xml->node as $n){
-				array_push($this->CHILDREN, new Node($n, $this->PAGE));
-			}
-		}else{
-			foreach($xml_data->node as $node){
-				array_push($this->CHILDREN, new Node($node, $this->PAGE));
-			}
-		}
-	}
-	
-	function overwrite($path, $prot, $obj){
-		__APPEND_LOG("Overwrite search -- STACK: ".print_r($path, true));
-		$target = array_pop($path);
-		__APPEND_LOG("Overwrite search -- CURRENT: ".$target);
-
-		foreach($this->CHILDREN as $k=>$c){
-			
-			switch(substr($target, 0, 1)){
-				case "#":
-					if($c->ID == substr($target, 1, strlen($target)-1)){
-						__APPEND_LOG("Overwrite search -- CHILD: ".$c->ID);
-						if(empty($path)){
-							$c->apply_overwrite($k, $obj, $prot);
-						}else{
-							$c->overwrite($path, $prot, $obj);
-						}
-						return;
-					}
-					break;
-				case ".":
-					if($c->CLASS == substr($target, 1, strlen($target)-1)){
-						__APPEND_LOG("Overwrite search -- CHILD: ".$c->CLASS);
-						if(empty($path)){
-							$c->apply_overwrite($k, $obj, $prot);
-						}else{
-							$c->overwrite($path, $prot, $obj);
-						}
-						return;
-					}
-					break;
-				default:
-					if($c->CONTEXT_VALUE == $target){
-						__APPEND_LOG("Overwrite search -- CHILD: ".$c->CONTEXT_VALUE);
-						if(empty($path)){
-							$c->apply_overwrite($k, $obj, $prot);
-						}else{
-							$c->overwrite($path, $prot, $obj);
-						}
-						return;
-					}
-					break;
-			}
-		}
-	}
-	
-	private function apply_overwrite($key, $object, $prot){
-		switch($prot){
-			case "pr":
-				array_splice($this->CHILDREN, $key, 0, array($object));
-				break;
-			case "po":
-				array_splice($this->CHILDREN, $key+1, 0, array($object));
-				break;
-				
-			case "rp":
-				$this->CHILDREN = $object->CHILDREN;
-				$this->PAGE = $object->PAGE;
-				$this->TYPE = $object->TYPE;
-				$this->CONTEXT_VALUE = $object->CONTEXT_VALUE;
-				$this->META_ARGS = $object->META_ARGS;
-				$this->CLASS = $object->CLASS;
-				$this->ID = $object->ID;
-				break;
-				
-			case 'alt':
-				$this->TYPE = $object->TYPE;
-				$this->META_ARGS = $object->META_ARGS;
-				$this->CHILDREN = $object->CHILDREN;
-				break;
-		}
-	}
-	
-	function render($context = null){
-		
-		switch($this->TYPE){
-			case "part":
-				foreach($this->CHILDREN as $c){
-					$c->render($context);
-				}
-				break;
-			case "static":
-
-				echo "<".$this->CONTEXT_VALUE." ";
-				
-				if($this->ID)
-					echo "id='".$this->ID."'";
-				
-				if($this->CLASS)
-					echo 'class="'.$this->CLASS.'"';
-				
-				echo $this->META_ARGS.">";
-				
-				foreach($this->CHILDREN as $D){
-					$D->render($context);
-				}
-								
-				echo "</".$this->CONTEXT_VALUE.">";
-				break;
-								
-			case "asset":
-				include($this->PAGE->MANAGER->ASSETS_ROOT.$this->CONTEXT_VALUE);
-				break;
-			
-			case "text":
-				echo $this->CONTEXT_VALUE;
-				break;
-		}
-	}
-	
-	function get_abstract($context=array()){
-		
-		$str = "";
-		
-		switch($this->TYPE){
-			case "part":
-				foreach($this->CHILDREN as $c){
-					$str.=$c->get_abstract($context);
-				}
-				break;
-			case "static":
-
-				$str.= "<".$this->CONTEXT_VALUE." ";
-				
-				if($this->ID)
-					$str.= "id='".$this->ID."'";
-				
-				if($this->CLASS)
-					$str.= 'class="'.$this->CLASS.'"';
-				
-				$str.= $this->META_ARGS.">";
-				
-				foreach($this->CHILDREN as $c){
-					$str.=$c->get_abstract($context);
-				}
-								
-				$str.= "</".$this->CONTEXT_VALUE.">";
-				break;
-								
-			case "asset":
-			
-				ob_start();
-				include($this->PAGE->MANAGER->ASSETS_ROOT.$this->CONTEXT_VALUE);
-				$returned = ob_get_contents();
-				ob_end_clean();
-			
-				$str.= $returned;
-				break;
-			
-			case "text":
-				$str.=$this->CONTEXT_VALUE;
-				break;
-		}
-		
-		return $str;
-	}
-	
-	
-	function __destruct(){
-		unset($this->CHILDREN);
-	}
-}
-
-	
 ?>

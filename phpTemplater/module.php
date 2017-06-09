@@ -5,15 +5,15 @@ if(!isset($MODULES_ROOT)) $MODULES_ROOT = "";
 
 class phpTemplaterModule extends Module{
 	
-	private $PAGE_MANAGER;
-	private $XML_SRC;
+	private $TEMPLATE_ROOTS;
 	private $ASSET_ROOT;
+	private $TEMPLATE_ROOT;
 	
 	function __construct($json){
 		$this->MODULEName = "phpTemplater";
 		$this->MODULESrc = "phpTemplater/";
 		$this->MODULEScripts = $json->MODULEScripts;
-		$this->XML_SRC = $json->XMLSrc;
+		$this->TEMPLATE_ROOT = $json->ROOT_DIR;
 		$this->ASSET_ROOT = $json->ASSET_ROOT;
 	}
 	
@@ -21,8 +21,6 @@ class phpTemplaterModule extends Module{
 		if($this->LOADED) return 1;
 		parent::Load();
 		$MEM = memory_get_usage();
-		$this->PAGE_MANAGER = new Pagemanager(simplexml_load_file($this->XML_SRC), $this->ASSET_ROOT);
-		__APPEND_LOG("XML Memory allocation:".(memory_get_usage()-$MEM));
 		$this->LOADED = true;
 	}
 	
@@ -35,17 +33,16 @@ class phpTemplaterModule extends Module{
 	public function create($create, $args=array()){
 		switch($create){
 			case "page":
-				return $this->PAGE_MANAGER->get_page($args['LABEL']);
+				return (new Template($this->TEMPLATE_ROOT, $args["name"]));
 				break;
 			case "abstract":
-				return $this->PAGE_MANAGER->get_abstract($args['LABEL']);
+				
 				break;
 		}
 	}
 	
 	function __destruct(){
 		$hold = memory_get_usage();
-		unset($this->PAGE_MANAGER);
 		__APPEND_LOG($this->MODULEName." destructed, freed ".((memory_get_usage()-$hold)/1024)."KB");
 	}
 }

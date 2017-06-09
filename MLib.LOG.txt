@@ -1,30 +1,33 @@
-[8-6-2017 17-38-03][Modules.php]	Logging enabled
-[8-6-2017 17-38-03][Modules.php]	Reading module config
-[8-6-2017 17-38-03][Modules.php]	Module loading: phpTemplater
-[8-6-2017 17-38-03][Modules.php]	Module ok: phpTemplater
-[8-6-2017 17-38-03][Modules.php]	Module loading: phpAccessController
-[8-6-2017 17-38-03][Modules.php]	Module ok: phpAccessController
-[8-6-2017 17-38-03][Modules.php]	Module loading: phpMySQL
-[8-6-2017 17-38-03][Modules.php]	Module ok: phpMySQL
-[8-6-2017 17-38-03][Modules.php]	Module loading: phpAuth
-[8-6-2017 17-38-03][Modules.php]	Module ok: phpAuth
-[8-6-2017 17-38-03][Modules.php]	Module config read
-[8-6-2017 17-38-03][class.module.php]	Module loaded: phpAccessController
-[8-6-2017 17-38-03][class.module.php]	Base memory usage: 0KB
-[8-6-2017 17-38-03][module.php]	RegisteredURL: /^\/(?P<file>css\/.*)$/
-[8-6-2017 17-38-03][module.php]	RegisteredURL: /^\/(?P<file>js\/.*)$/
-[8-6-2017 17-38-03][module.php]	RegisteredURL: /^\/(?P<file>img\/.*)$/
-[8-6-2017 17-38-03][module.php]	RegisteredURL: /^(noPage)&/
-[8-6-2017 17-38-03][module.php]	RegisteredURL: /(^\/index$)|(^\/$)|(^\/index.php$)/
-[8-6-2017 17-38-03][module.php]	RegisteredURL: /(^\/snoop.php$)/
-[8-6-2017 17-38-03][module.php]	attempting to parse url: /
-[8-6-2017 17-38-03][module.php]	Parsing URL: /
-[8-6-2017 17-38-03][module.php]	/->/^\/(?P<file>css\/.*)$/
-[8-6-2017 17-38-03][module.php]	/->/^\/(?P<file>js\/.*)$/
-[8-6-2017 17-38-03][module.php]	/->/^\/(?P<file>img\/.*)$/
-[8-6-2017 17-38-03][module.php]	/->/^(noPage)&/
-[8-6-2017 17-38-03][module.php]	/->/(^\/index$)|(^\/$)|(^\/index.php$)/
-[8-6-2017 17-38-03][module.php]	Array
+[9-6-2017 17-55-49][Modules.php]	Logging enabled
+[9-6-2017 17-55-49][Modules.php]	Reading module config
+[9-6-2017 17-55-49][Modules.php]	Module loading: phpTemplater
+[9-6-2017 17-55-49][Modules.php]	Module ok: phpTemplater
+[9-6-2017 17-55-49][Modules.php]	Module loading: phpAccessController
+[9-6-2017 17-55-49][Modules.php]	Module ok: phpAccessController
+[9-6-2017 17-55-49][Modules.php]	Module loading: phpMySQL
+[9-6-2017 17-55-49][Modules.php]	Module ok: phpMySQL
+[9-6-2017 17-55-49][Modules.php]	Module loading: phpAuth
+[9-6-2017 17-55-49][Modules.php]	Module ok: phpAuth
+[9-6-2017 17-55-49][Modules.php]	Module config read
+[9-6-2017 17-55-49][class.module.php]	Module loaded: phpAccessController
+[9-6-2017 17-55-49][class.module.php]	Base memory usage: 0KB
+[9-6-2017 17-55-49][module.php]	RegisteredURL: /^\/(?P<file>css\/.*)$/
+[9-6-2017 17-55-49][module.php]	RegisteredURL: /^\/(?P<file>js\/.*)$/
+[9-6-2017 17-55-49][module.php]	RegisteredURL: /^\/(?P<file>img\/.*)$/
+[9-6-2017 17-55-49][module.php]	RegisteredURL: /^(noPage)&/
+[9-6-2017 17-55-49][module.php]	RegisteredURL: /(^\/index$)|(^\/$)|(^\/index.php$)/
+[9-6-2017 17-55-49][module.php]	RegisteredURL: /(^\/snoop.php$)/
+[9-6-2017 17-55-49][class.module.php]	Adding script: template.php
+[9-6-2017 17-55-49][class.module.php]	Module loaded: phpTemplater
+[9-6-2017 17-55-49][class.module.php]	Base memory usage: 3.9609375KB
+[9-6-2017 17-55-49][module.php]	attempting to parse url: /
+[9-6-2017 17-55-49][module.php]	Parsing URL: /
+[9-6-2017 17-55-49][module.php]	/->/^\/(?P<file>css\/.*)$/
+[9-6-2017 17-55-49][module.php]	/->/^\/(?P<file>js\/.*)$/
+[9-6-2017 17-55-49][module.php]	/->/^\/(?P<file>img\/.*)$/
+[9-6-2017 17-55-49][module.php]	/->/^(noPage)&/
+[9-6-2017 17-55-49][module.php]	/->/(^\/index$)|(^\/$)|(^\/index.php$)/
+[9-6-2017 17-55-49][module.php]	Array
 (
     [0] => Array
         (
@@ -35,5 +38,5 @@
 
 )
 
-[8-6-2017 17-38-03][module.php]	phpTemplater destructed, freed 0.046875KB
-[8-6-2017 17-38-03][module.php]	phpAccessController unloaded, memory freed: 0.546875KB
+[9-6-2017 17-55-49][module.php]	phpTemplater destructed, freed 0.046875KB
+[9-6-2017 17-55-49][module.php]	phpAccessController unloaded, memory freed: 0.546875KB
