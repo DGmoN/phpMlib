@@ -6,7 +6,6 @@ if(!isset($MODULES_ROOT)) $MODULES_ROOT = "";
 class phpTemplaterModule extends Module{
 	
 	private $TEMPLATE_ROOTS;
-	private $ASSET_ROOT;
 	private $TEMPLATE_ROOT;
 	
 	function __construct($json){
@@ -14,7 +13,6 @@ class phpTemplaterModule extends Module{
 		$this->MODULESrc = "phpTemplater/";
 		$this->MODULEScripts = $json->MODULEScripts;
 		$this->TEMPLATE_ROOT = $json->ROOT_DIR;
-		$this->ASSET_ROOT = $json->ASSET_ROOT;
 	}
 	
 	public function Load(){
@@ -26,7 +24,7 @@ class phpTemplaterModule extends Module{
 	
 	// ARGS
 	/*		page
-				LABEL	-	The label of the page
+				name - file name
 	*/
 	
 	
@@ -40,6 +38,8 @@ class phpTemplaterModule extends Module{
 				break;
 		}
 	}
+	
+	
 	
 	function __destruct(){
 		$hold = memory_get_usage();

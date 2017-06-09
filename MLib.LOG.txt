@@ -1,33 +1,29 @@
-[9-6-2017 17-55-49][Modules.php]	Logging enabled
-[9-6-2017 17-55-49][Modules.php]	Reading module config
-[9-6-2017 17-55-49][Modules.php]	Module loading: phpTemplater
-[9-6-2017 17-55-49][Modules.php]	Module ok: phpTemplater
-[9-6-2017 17-55-49][Modules.php]	Module loading: phpAccessController
-[9-6-2017 17-55-49][Modules.php]	Module ok: phpAccessController
-[9-6-2017 17-55-49][Modules.php]	Module loading: phpMySQL
-[9-6-2017 17-55-49][Modules.php]	Module ok: phpMySQL
-[9-6-2017 17-55-49][Modules.php]	Module loading: phpAuth
-[9-6-2017 17-55-49][Modules.php]	Module ok: phpAuth
-[9-6-2017 17-55-49][Modules.php]	Module config read
-[9-6-2017 17-55-49][class.module.php]	Module loaded: phpAccessController
-[9-6-2017 17-55-49][class.module.php]	Base memory usage: 0KB
-[9-6-2017 17-55-49][module.php]	RegisteredURL: /^\/(?P<file>css\/.*)$/
-[9-6-2017 17-55-49][module.php]	RegisteredURL: /^\/(?P<file>js\/.*)$/
-[9-6-2017 17-55-49][module.php]	RegisteredURL: /^\/(?P<file>img\/.*)$/
-[9-6-2017 17-55-49][module.php]	RegisteredURL: /^(noPage)&/
-[9-6-2017 17-55-49][module.php]	RegisteredURL: /(^\/index$)|(^\/$)|(^\/index.php$)/
-[9-6-2017 17-55-49][module.php]	RegisteredURL: /(^\/snoop.php$)/
-[9-6-2017 17-55-49][class.module.php]	Adding script: template.php
-[9-6-2017 17-55-49][class.module.php]	Module loaded: phpTemplater
-[9-6-2017 17-55-49][class.module.php]	Base memory usage: 3.9609375KB
-[9-6-2017 17-55-49][module.php]	attempting to parse url: /
-[9-6-2017 17-55-49][module.php]	Parsing URL: /
-[9-6-2017 17-55-49][module.php]	/->/^\/(?P<file>css\/.*)$/
-[9-6-2017 17-55-49][module.php]	/->/^\/(?P<file>js\/.*)$/
-[9-6-2017 17-55-49][module.php]	/->/^\/(?P<file>img\/.*)$/
-[9-6-2017 17-55-49][module.php]	/->/^(noPage)&/
-[9-6-2017 17-55-49][module.php]	/->/(^\/index$)|(^\/$)|(^\/index.php$)/
-[9-6-2017 17-55-49][module.php]	Array
+[9-6-2017 19-12-21][Modules.php]	Logging enabled
+[9-6-2017 19-12-21][Modules.php]	Reading module config
+[9-6-2017 19-12-21][Modules.php]	Module loading: phpTemplater
+[9-6-2017 19-12-21][Modules.php]	Module ok: phpTemplater
+[9-6-2017 19-12-21][Modules.php]	Module loading: phpAccessController
+[9-6-2017 19-12-21][Modules.php]	Module ok: phpAccessController
+[9-6-2017 19-12-21][Modules.php]	Module loading: phpMySQL
+[9-6-2017 19-12-21][Modules.php]	Module ok: phpMySQL
+[9-6-2017 19-12-21][Modules.php]	Module loading: phpAuth
+[9-6-2017 19-12-21][Modules.php]	Module ok: phpAuth
+[9-6-2017 19-12-21][Modules.php]	Module config read
+[9-6-2017 19-12-21][class.module.php]	Module loaded: phpAccessController
+[9-6-2017 19-12-21][class.module.php]	Base memory usage: 0KB
+[9-6-2017 19-12-21][module.php]	RegisteredURL: /^\/(?P<file>css\/.*)$/
+[9-6-2017 19-12-21][module.php]	RegisteredURL: /^\/(?P<file>js\/.*)$/
+[9-6-2017 19-12-21][module.php]	RegisteredURL: /^\/(?P<file>img\/.*)$/
+[9-6-2017 19-12-21][module.php]	RegisteredURL: /^(noPage)&/
+[9-6-2017 19-12-21][module.php]	RegisteredURL: /(^\/index$)|(^\/$)|(^\/index.php$)/
+[9-6-2017 19-12-21][module.php]	attempting to parse url: /
+[9-6-2017 19-12-21][module.php]	Parsing URL: /
+[9-6-2017 19-12-21][module.php]	/->/^\/(?P<file>css\/.*)$/
+[9-6-2017 19-12-21][module.php]	/->/^\/(?P<file>js\/.*)$/
+[9-6-2017 19-12-21][module.php]	/->/^\/(?P<file>img\/.*)$/
+[9-6-2017 19-12-21][module.php]	/->/^(noPage)&/
+[9-6-2017 19-12-21][module.php]	/->/(^\/index$)|(^\/$)|(^\/index.php$)/
+[9-6-2017 19-12-21][module.php]	Array
 (
     [0] => Array
         (
@@ -38,5 +34,9 @@
 
 )
 
-[9-6-2017 17-55-49][module.php]	phpTemplater destructed, freed 0.046875KB
-[9-6-2017 17-55-49][module.php]	phpAccessController unloaded, memory freed: 0.546875KB
+[9-6-2017 19-12-21][class.module.php]	Adding script: template.php
+[9-6-2017 19-12-21][class.module.php]	Module loaded: phpTemplater
+[9-6-2017 19-12-21][class.module.php]	Base memory usage: 5.8984375KB
+[9-6-2017 19-12-21][template.php]	Rendering: root>index.php
+[9-6-2017 19-12-21][module.php]	phpTemplater destructed, freed 0.046875KB
+[9-6-2017 19-12-21][module.php]	phpAccessController unloaded, memory freed: 0.546875KB

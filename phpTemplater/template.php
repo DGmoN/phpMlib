@@ -4,8 +4,8 @@ class Template{
 	
 	private $TFILE, $TROOT;
 	
-	function __construct($root, $file){
-		$this->TROOT = $root;
+	function __construct($Roots, $file){
+		$this->TROOT = $Roots;
 		$this->TFILE = $file;
 	}
 	
@@ -18,8 +18,9 @@ class Template{
 		$SRC = $this;
 		
 		// renders the file and stores contnt
+		__APPEND_LOG("Rendering: ".$this->TFILE);
 		ob_start();
-		include($this->TROOT. $this->TFILE);
+		include($this->parse_id($this->TFILE));
 		$returned = ob_get_contents();
 		ob_end_clean();  
 		
@@ -27,9 +28,8 @@ class Template{
 		if(isset($parent)){
 			
 			$CONTEXT[$parent[1]] = $returned;
-			
 			ob_start();
-			include($this->TROOT.$parent[0]);
+			include($this->parse_id($parent[0]));
 			$returned = ob_get_contents();
 			ob_end_clean();  
 		}
@@ -38,12 +38,27 @@ class Template{
 		echo $returned;
 	}
 	
+	// parse the ID to the correct target
+	private function parse_id($id){
+		if(strpos($id, ">")>0){
+			$split = explode(">",$id);
+			$alias = $split[0];
+			return $this->TROOT->$alias.$split[1];
+		}
+	}
+	
 	function child($CONTEXT, $ID){
 		if(isset($CONTEXT[$ID])){
 			return $CONTEXT[$ID];
 		}else{
+			
+			$file = $this->parse_id($ID);
+			if(!file_exists($file)){
+				__APPEND_LOG("Failed to load file: ". $ID);
+				return;
+			}
 			ob_start();
-			include($this->TROOT.$ID);
+			include($file);
 			$returned = ob_get_contents();
 			ob_end_clean();  		
 			return $returned;
