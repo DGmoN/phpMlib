@@ -8,7 +8,7 @@
 $MODULES_ROOT = $_SERVER["DOCUMENT_ROOT"]."/phpMLib";
 
 $__LOGGING_ENABLED = true;
-$__LOG_FILE = $MODULES_ROOT."/MLib.LOG.txt";
+//$__LOG_FILE = $MODULES_ROOT."/MLib.LOG.txt";
 $__MODULE_CONFIG = $MODULES_ROOT."/modules.cfg";
 
 require_once("phpModules/Modules.php");

@@ -75,7 +75,7 @@ class DATABASE{
 	function populate_tables(){
 		$query = "SHOW TABLES";
 		$res = $this->relay($query);
-		while($q = mysqli_fetch_array($res)){
+		while(@$q = mysqli_fetch_array($res)){
 			__APPEND_LOG("Tabled registered: ".$q[0]);
 			$this->TABELS[$q[0]] = new TABLE($this, $q[0]);
 		}
@@ -129,6 +129,8 @@ class TABLE{
 	}
 	
 	function get_columns(){
+		
+		
 		return $this->COLUMNS;
 	}
 	
@@ -155,6 +157,20 @@ class TABLE{
 	function truncate(){
 		$query = "TRUNCATE ".$this->TABLE;
 		$this->DATABASE->relay($query);
+	}
+	
+
+	// creates a column set from the assoc array
+	function localize($data){
+		$ret = array();
+		foreach ($this->COLUMNS as $e){
+			if(@$data[$e->NAME]){
+				$hold = $e->duplicate();
+				$hold->VALUE = $data[$e->NAME];
+				$ret[$e->NAME]=$hold;
+			}
+		}
+		return $ret;
 	}
 	
 	// Generates columns for the table
@@ -217,10 +233,12 @@ class TABLE{
 	
 	// converts the fetched query into useable data
 	function normalize($request){
-		
+		if(!$request) return 0;
 		if($request->num_rows<=0){
 			return 0;
 		}
+		
+		$rows = array();
 		
 		if($request->num_rows==1){
 			$hold = mysqli_fetch_assoc($request);
@@ -229,13 +247,13 @@ class TABLE{
 				$ret[$k] = $this->COLUMNS[$k]->duplicate();
 				$ret[$k]->VALUE = $c;
 			}
+			
+			
 			return $ret;
 		}
-		
-		$rows = array();
-		while($hold = $mysqli_fetch_assoc($request)){
-			$hold = mysqli_fetch_assoc($request);
-			$cols = array();
+				
+		while($hold = mysqli_fetch_assoc($request)){
+			$ret = array();
 			foreach($hold as $k=>$c){
 				$ret[$k] = $this->COLUMNS[$k]->duplicate();
 				$ret[$k]->VALUE = $c;

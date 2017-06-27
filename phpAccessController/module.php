@@ -24,6 +24,7 @@ class phpAccessControllerModule extends Module{
 	}
 	
 	public function Load(){
+		__APPEND_LOG("CONTROLL: ".$this->LOADED);
 		if($this->LOADED) return 1;
 
 		parent::Load();
@@ -36,7 +37,7 @@ class phpAccessControllerModule extends Module{
 
 		foreach($files as $f){
 			if($f != "." && $f != ".."){
-				require($this->REGISTRY_ROOT.$f);
+				require_once($this->REGISTRY_ROOT.$f);
 				$register($this);
 			}
 		}

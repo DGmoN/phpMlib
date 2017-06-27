@@ -47,6 +47,7 @@ class Template{
 		}
 	}
 	
+	
 	function child($CONTEXT, $ID){
 		if(isset($CONTEXT[$ID])){
 			return $CONTEXT[$ID];
