@@ -16,7 +16,5 @@ global $__MODULE_REGISTRY;
 //$__MODULE_REGISTRY['phpAccessController']->Load();
 
 
-$__MODULE_REGISTRY['phpAccessController']->register_handler(".*(\/media\/)(?P<mid>.*)", new MediaHandler, "MEDIA");
-
 
 ?>

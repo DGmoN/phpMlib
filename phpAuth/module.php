@@ -27,28 +27,26 @@ class phpAuthModule extends Module{
 		$database = $__MODULE_REGISTRY['phpMySQL']->create("database", array('name'=>$this->DName));
 		$this->TABLE = $__MODULE_REGISTRY['phpMySQL']->create("table", array('name'=>$this->TName, "database"=>$database));
 		$this->META = $__MODULE_REGISTRY['phpMySQL']->create("table", array('name'=>$this->MTable, "database"=>$database));
-
+		
 		$this->COLS = $this->TABLE->get_columns();
 	}
 	
 	
 	// Authenticates the user data
-	private function login($Uname, $Pword){
-		$this->COLS['Username']->VALUE = $Uname;
-		$this->COLS['ID']->VALUE = null;
-		$data = $this->TABLE->fetch(array($this->COLS['Username'], $this->COLS['Password'], $this->COLS['ID']));
-		$data = $this->TABLE->normalize($data);
-		if(empty($data)) return false;
-			
+	private function login($uid, $Pword){
+		$cols = $this->TABLE->localize(array("ID"=>$uid));
+		$cols = $this->TABLE->fetch($cols);
+		$cols = mysqli_fetch_assoc($cols);
+		if(empty($cols)) return false;
 		$givenP =	$Pword;
-		$StoredP = $data['Password']->VALUE;
+		$StoredP = $cols['hash'];
 		if(password_verify($givenP, $StoredP)){
-			$this->COLS['Checkin']->VALUE = date('Y-m-d G:i:s');
-			$sesh = $this->COLS['Sessionkey']->VALUE = md5($this->COLS['Checkin']->VALUE);
-			$this->COLS['last_addr']->VALUE = $_SERVER['REMOTE_ADDR'];
-			$this->TABLE->update(array($this->COLS['Checkin'], $this->COLS['Sessionkey'], $this->COLS['last_addr']), $data['ID']);
+			//$this->COLS['Checkin']->VALUE = date('Y-m-d G:i:s');
+			//$sesh = $this->COLS['Sessionkey']->VALUE = md5($this->COLS['Checkin']->VALUE);
+			//$this->COLS['last_addr']->VALUE = $_SERVER['REMOTE_ADDR'];
+			//$this->TABLE->update(array($this->COLS['Checkin'], $this->COLS['Sessionkey'], $this->COLS['last_addr']), $data['ID']);
 			
-			return array("sessionkey"=>$sesh, "id" =>$data['ID']->VALUE, "username"=>$data['Username']->VALUE, "meta"=>$this->fetch_meta($data['ID']->VALUE)) ;
+			return true;
 		}
 	}
 	
@@ -91,21 +89,14 @@ class phpAuthModule extends Module{
 		return 1;
 	}
 		
-	private function register($UName, $PWord, $meta){
-		$cols = $this->TABLE->get_columns();
-		$cols['Username']->VALUE = $UName;
-		$cols['Password']->VALUE = password_hash($PWord, PASSWORD_BCRYPT);
+	private function register($PWord){
+		$cols = $this->TABLE->localize(array("hash"=>password_hash($PWord, PASSWORD_BCRYPT), "ID"=>0));
 		$this->TABLE->insert($cols);
 		
-		$ret = $this->TABLE->fetch(array($cols['ID'], $cols['Username']));
-		$norm = $this->TABLE->normalize($ret);
-		print_r($norm);
-		$UID = $norm['ID']->VALUE;
-		$meta['userid'] = $UID;
-		$meta['token'] = md5(rand(0, 9999));
-		$cols = $this->META->localize($meta);
-		$this->META->insert($cols);
-		return true;
+		$ret = $this->TABLE->relay("SElECT MAX(ID) FROM ".$this->TName);
+		$ret = mysqli_fetch_array($ret);
+		$UID = $ret[0];
+		return $UID;
 	}
 		
 	function checkAvailable($uname){
@@ -119,7 +110,7 @@ class phpAuthModule extends Module{
 	function create($option, $args=array()){
 		switch($option){
 			case "login":
-				return $this->login($args['name'], $args['password']);
+				return $this->login($args['uid'], $args['password']);
 			case "verify":
 				$veri = $this->verify($args['id'], $args['sessionkey']);
 				if($veri) return true;
@@ -130,7 +121,7 @@ class phpAuthModule extends Module{
 				return 1;
 				
 			case "register":
-				return $this->register($args['name'], $args['password'], $args['meta']);
+				return $this->register($args['password']);
 		}
 	}
 }

@@ -8,6 +8,9 @@ class phpMediaModule extends Module{
 	public $DATABASE_Name = null;
 	public $LOADED = false;
 	public $ROOT = "";
+	
+
+	
 	private $TABLE;
 	
 	
@@ -16,7 +19,14 @@ class phpMediaModule extends Module{
 		$this->TABLE_Name = $json->TableName;
 		$this->DATABASE_Name = $json->DatabaseName;
 		$this->ROOT = $json->ROOTDir;
+		
+		$this->INTEGRATION["phpAccessController"] = function($module){
+									require("handles.php");
+									$module->register_handler(".*(\/media\/)(?P<mid>.*)", new MediaHandler, "MEDIA");
+								};
+		
 	}
+	
 	
 	function Load(){
 		if($this->LOADED) return 1;

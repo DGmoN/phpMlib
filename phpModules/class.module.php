@@ -12,8 +12,9 @@ class Module{
 	public $MODULEName;
 	public $MODULESrc;
 	public $MODULEScripts = array();
-	public $OverwriteModules = array();
+
 	public $LOADED = false;
+	public $INTEGRATION = array();
 	
 	protected $MEMORY = 0;
 	
@@ -21,10 +22,7 @@ class Module{
 		$this->MODULEName = $json->MODULEName;
 		$this->MODULESrc = $json->MODULESrc;
 		$this->MODULEScripts = $json->MODULEScripts;
-		if(isset($json->OVERWRITE)){
-			
-			$this->OverwriteModules = $json->OVERWRITE;
-		}
+
 		
 	}
 	
@@ -34,7 +32,7 @@ class Module{
 	// Loads the module dependencies
 	public function Load(){
 		$this->MEMORY = memory_get_usage();
-
+		
 		foreach($this->MODULEScripts as $script){
 			__APPEND_LOG("Adding script: ".$script);
 			global $MODULES_ROOT;
@@ -46,18 +44,23 @@ class Module{
 				__APPEND_LOG("Failed to load script: ".$e->getMessage());
 			}
 		}
-		
-		if(!empty($this->OverwriteModules)){
-			global $__MODULE_REGISTRY;
-			foreach($this->OverwriteModules as $m){
-				$__MODULE_REGISTRY[$m]->Load();
-			}
-		}
-		
+				
 		$this->MEMORY = memory_get_usage()-$this->MEMORY;
 		__APPEND_LOG("Module loaded: ".$this->MODULEName);
 		__APPEND_LOG("Base memory usage: ".($this->MEMORY/1024)."KB");
+		$this->integration();
 	}
+	
+	private function integration(){
+		global $__MODULE_REGISTRY;
+		foreach($__MODULE_REGISTRY as $m){
+			if($m != $this){
+				if(isset($m->INTEGRATION[$this->MODULEName]))
+					$m->INTEGRATION[$this->MODULEName]($this);
+			}
+		}
+	}
+	
 	
 	// Used so that other modules can create objects native to this module
 	public function create($create, $args=array()){}

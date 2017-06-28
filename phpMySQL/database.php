@@ -164,12 +164,14 @@ class TABLE{
 	function localize($data){
 		$ret = array();
 		foreach ($this->COLUMNS as $e){
-			if(@$data[$e->NAME]){
+			if(isset($data[$e->NAME])){
 				$hold = $e->duplicate();
 				$hold->VALUE = $data[$e->NAME];
 				$ret[$e->NAME]=$hold;
 			}
 		}
+		__APPEND_LOG(print_r($ret, true));
+		//__APPEND_LOG(print_r($this->COLUMNS, true));
 		return $ret;
 	}
 	
@@ -214,12 +216,17 @@ class TABLE{
 			$select = array();
 			$where = array();
 			foreach($COLUMNS as $c){
-				array_push($select, $c->NAME);
+				
 				if($c->VALUE){
 					array_push($where, $c->NAME."='".$c->VALUE."'");
+				}else{
+					array_push($select, $c->NAME);
 				}
 			}
-			$select = implode(", ", $select);
+			if(empty($select)){
+				$select = "*";
+			}else
+				$select = implode(", ", $select);
 			if(!empty($where)){
 				$where = "WHERE ".implode(", ", $where);
 			}else{
@@ -290,12 +297,18 @@ class TABLE{
 		
 		$ref = "";
 		if($refrence){
-			$ref = " WHERE ".$refrence->NAME."=".$refrence->VALUE;
+			$ref = " WHERE ".$refrence->NAME."='".$refrence->VALUE."'";
 		}
 		
 		$query = "UPDATE ".$this->NAME." SET ".implode(', ',$alter)." ".$ref;
 		return $this->DATABASE->relay($query);
 	}
+	
+	
+	function relay($sql){
+		return $this->DATABASE->relay($sql);
+	}
+	
 }
 
 class COLUMN{
@@ -328,8 +341,6 @@ class COLUMN{
 		return $ret;
 	}
 }
-
-
 
 
 

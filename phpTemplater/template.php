@@ -38,6 +38,23 @@ class Template{
 		echo $returned;
 	}
 	
+	function render_abstract($context=array()){
+		// Creates the context variables
+		$CONTEXT = $context;
+		
+		// The instance referer
+		$SRC = $this;
+		
+		// renders the file and stores contnt
+		__APPEND_LOG("Rendering: ".$this->TFILE);
+		ob_start();
+		include($this->parse_id($this->TFILE));
+		$returned = ob_get_contents();
+		ob_end_clean();  
+		
+		return $returned;
+	}
+	
 	// parse the ID to the correct target
 	private function parse_id($id){
 		if(strpos($id, ">")>0){

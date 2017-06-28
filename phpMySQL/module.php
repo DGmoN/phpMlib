@@ -30,6 +30,13 @@ class phpMySQLModule extends Module{
 	
 	function create($option, $args=array()){
 		switch($option){
+			case 'quick':
+				$db = $args['db'];
+				$table = $args['table'];
+				$db = new DATABASE($this->SQLConnector, $db);
+				$table = new TABLE($db, $table);
+				return $table;
+				
 			case "database":
 				return new DATABASE($this->SQLConnector, $args['name']);
 			case "table":

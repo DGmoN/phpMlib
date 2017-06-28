@@ -15,9 +15,9 @@ if(!isset($__LOGGING_ENABLED))
 
 if($__LOGGING_ENABLED){
 	if(!isset($__LOG_FILE))
-		$__LOG_FILE = rand(0, 10)."log.txt";
+		$__LOG_FILE = "log.txt";
 
-	$Log_asset = fopen($__LOG_FILE, "w");
+	$Log_asset = fopen($__LOG_FILE, "a");
 }
 
 function __APPEND_LOG($STR){
