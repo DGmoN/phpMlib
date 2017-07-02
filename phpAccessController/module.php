@@ -92,12 +92,6 @@ class phpAccessControllerModule extends Module{
 	
 	public function create($create, $args=array()){
 		switch($create){
-			case "parse":
-				__APPEND_LOG("attempting to parse url: ".$args['url']);
-				$request = $this->URL_PARSER->PARESE_URL($args['url']);
-				$this->PAGE_HANDLERS[$request['TARGET']]($request);
-				return 1;
-				break;
 			case "remote_render":
 				__APPEND_LOG("attempting to parse request: ".$args['url']);
 				$request = $this->URL_PARSER->PARESE_URL($args['url']);
@@ -105,7 +99,7 @@ class phpAccessControllerModule extends Module{
 				$this->PAGE_HANDLERS[$request['TARGET']]($request);
 				break;
 				
-			case "demo":
+			case "parse":
 				__APPEND_LOG("attempting to parse url: ".$args['url']);
 				$request = $this->parse($args['url']);	
 				$request['HANDLER']->handle($request);

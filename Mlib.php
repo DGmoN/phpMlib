@@ -5,7 +5,7 @@
 // 	__MODULE_CONFIG		->	Designates the config file
 //	__MODULE_REGISTRY	->	An array of all the registered modules
 
-$MODULES_ROOT = $_SERVER["DOCUMENT_ROOT"]."/phpMLib";
+$MODULES_ROOT = $_SERVER["DOCUMENT_ROOT"]."/phpMlib";
 
 $__LOGGING_ENABLED = true;
 //$__LOG_FILE = $MODULES_ROOT."/MLib.LOG.txt";
