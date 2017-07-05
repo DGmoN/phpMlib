@@ -7,6 +7,7 @@ class Template{
 	function __construct($Roots, $file){
 		$this->TROOT = $Roots;
 		$this->TFILE = $file;
+		__APPEND_LOG($this->parse_id($this->TFILE));
 	}
 	
 	// Renders the page contents
@@ -19,6 +20,7 @@ class Template{
 		
 		// renders the file and stores contnt
 		__APPEND_LOG("Rendering: ".$this->TFILE);
+
 		ob_start();
 		include($this->parse_id($this->TFILE));
 		$returned = ob_get_contents();
@@ -60,7 +62,10 @@ class Template{
 		if(strpos($id, ">")>0){
 			$split = explode(">",$id);
 			$alias = $split[0];
-			return $this->TROOT->$alias.$split[1];
+			if(isset($this->TROOT->$alias))
+				return $this->TROOT->$alias.$split[1];
+			else
+				__APPEND_LOG("Failed to parse template ID, not alias: ".$alias);
 		}
 	}
 	
@@ -68,8 +73,7 @@ class Template{
 	function child($CONTEXT, $ID){
 		if(isset($CONTEXT[$ID])){
 			return $CONTEXT[$ID];
-		}else{
-			
+		}else{	
 			$file = $this->parse_id($ID);
 			if(!file_exists($file)){
 				__APPEND_LOG("Failed to load file: ". $ID);

@@ -92,6 +92,7 @@ class phpAccessControllerModule extends Module{
 	
 	public function create($create, $args=array()){
 		switch($create){
+				
 			case "remote_render":
 				__APPEND_LOG("attempting to parse request: ".$args['url']);
 				$request = $this->URL_PARSER->PARESE_URL($args['url']);

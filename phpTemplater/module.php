@@ -33,9 +33,6 @@ class phpTemplaterModule extends Module{
 			case "page":
 				return (new Template($this->TEMPLATE_ROOT, $args["name"]));
 				break;
-			case "abstract":
-				
-				break;
 		}
 	}
 	

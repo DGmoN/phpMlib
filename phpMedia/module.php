@@ -23,6 +23,7 @@ class phpMediaModule extends Module{
 		$this->INTEGRATION["phpAccessController"] = function($module){
 									require("handles.php");
 									$module->register_handler(".*(\/media\/)(?P<mid>.*)", new MediaHandler, "MEDIA");
+									$module->register_handler("^(\/mediasubmit\/)$", new MediaAdditionHandler, "MEDIAADD");
 								};
 		
 	}
@@ -39,13 +40,42 @@ class phpMediaModule extends Module{
 		$this->LOADED = true;
 	}
 	
+	function handle_upload(){
+		global $__MODULE_REGISTRY;
+			
+			$File = $_FILES['submission']['tmp_name'];
+			$finfo = new finfo(FILEINFO_MIME_TYPE);
+			$mime = $finfo->file($File);
+			$name = md5(rand(0, 9999))."-".$_FILES['submission']['name'];
+			$size = $_FILES['submission']['size'];
+			$id = md5($name);
+			
+			$__MODULE_REGISTRY['phpMySQL']->Load();
+			$table = $__MODULE_REGISTRY['phpMySQL']->create("quick", array("db"=>"honinworx", "table"=>"media"));
+			$data = array(	"media_id"	=>	$id,
+							"mime"		=>	$mime,
+							"name"		=>	$name,
+							"size"		=>	$size
+						);
+						
+			$cols = $table->localize($data);
+
+			if(move_uploaded_file($File, $this->ROOT.$name)){			
+				$table->insert($cols);
+				return $id;
+			}else{
+				return false;
+			}
+			
+	}
+	
 	function fetch_data($mid){
-		$cols = $this->TABLE->get_columns();
-		$cols['media_id']->VALUE	=	$mid;
+		$cols = $this->TABLE->localize(array("media_id"=>""));
+		$cols['media_id']->VALUE=$mid;
 		
 		$data = $this->TABLE->fetch($cols);
 		$data = mysqli_fetch_assoc($data);
-		
+		__APPEND_LOG(print_r($data, true));
 		header('Content-Type: '.$data['mime']);
 		
 		$file = $this->ROOT.$data['name'];

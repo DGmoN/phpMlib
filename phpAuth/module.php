@@ -8,7 +8,6 @@ class phpAuthModule extends Module{
 	private $TABLE;
 	private $META;
 	
-	private $MTable;
 	
 	private $COLS;
 	
@@ -16,7 +15,6 @@ class phpAuthModule extends Module{
 		parent::__construct($json);
 		$this->TName = $json->TableName;
 		$this->DName = $json->DatabaseName;
-		$this->MTable = $json->MetaTable;
 	}
 	
 	function Load(){
@@ -26,7 +24,6 @@ class phpAuthModule extends Module{
 		
 		$database = $__MODULE_REGISTRY['phpMySQL']->create("database", array('name'=>$this->DName));
 		$this->TABLE = $__MODULE_REGISTRY['phpMySQL']->create("table", array('name'=>$this->TName, "database"=>$database));
-		$this->META = $__MODULE_REGISTRY['phpMySQL']->create("table", array('name'=>$this->MTable, "database"=>$database));
 		
 		$this->COLS = $this->TABLE->get_columns();
 	}
