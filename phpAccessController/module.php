@@ -9,15 +9,14 @@ class phpAccessControllerModule extends Module{
 	public $URL_DIR;
 	private $HTACCESS = false;
 	private $URL_PARSER = null;
-	public $ASSETS_ROOT;
+	public $ASSET_DIRS;
 	
 	private $REGISTRY = array();
 	private $REGISTRY_ROOT = null;
 	
 	function __construct($json){
 		parent::__construct($json);
-		global $ASSETS_ROOT;
-		$ASSETS_ROOT = $json->ASSETS_ROOT;
+		$this->ASSET_DIRS = $json->ASSET_DIRS;
 		$this->REGISTRY_ROOT = $json->REGISTRY;
 		$this->HTACCESS = $json->HTACCESS == "true";
 		
@@ -61,6 +60,10 @@ class phpAccessControllerModule extends Module{
 		$ID = count($this->REGISTRY);
 		
 		__APPEND_LOG("RegisteredURL: ".$pair["REX"]);
+	}
+	
+	function get_dir($handle){
+		return $this->ASSET_DIRS->$handle;
 	}
 	
 	// Appends the predefined page handlers for the module

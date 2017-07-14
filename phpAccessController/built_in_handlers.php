@@ -4,30 +4,32 @@ require_once("phpMlib/phpAccessController/parser.class.php");
 class CSSHandle extends AccessHandler{
 	
 	function handle($GET=null){
-		global $ASSETS_ROOT;
-		$file = $ASSETS_ROOT.$GET['MATCHES'][0]['file'];
-		if(file_exists($file)){
-			
-			global $ASSETS_ROOT;
+		global $__MODULE_REGISTRY;
+		$root_dir = $GET['MATCHES'][0]['root'];
+		$file = $GET['MATCHES'][0]['file'];
+		$root_dir = $__MODULE_REGISTRY['phpAccessController']->get_dir($root_dir);
+		$path = $root_dir.'css/'.$file;
+		if(file_exists($path)){
 			header('Content-Type: text/css');
-			require($file);
+			require($path);
 		}else
-			echo "No such asset: ".$ASSETS_ROOT.$GET['REQUEST']['URL'];
+			echo "No such asset: ".$path;
 	}
 }
 
 class JSHandle extends AccessHandler{
 	
 	function handle($GET=null){
-		global $ASSETS_ROOT;
-		$file = $ASSETS_ROOT.$GET['MATCHES'][0]['file'];
-		if(file_exists($file)){
-			
-			global $ASSETS_ROOT;
+		global $__MODULE_REGISTRY;
+		$root_dir = $GET['MATCHES'][0]['root'];
+		$file = $GET['MATCHES'][0]['file'];
+		$root_dir = $__MODULE_REGISTRY['phpAccessController']->get_dir($root_dir);
+		$path = $root_dir.'js/'.$file;
+		if(file_exists($path)){
 			header('Content-Type: text/js');
-			require($file);
+			require($path);
 		}else
-			echo "No such asset: ".$ASSETS_ROOT.$GET['REQUEST']['URL'];
+			echo "No such asset: ".$path;
 	}
 }
 
@@ -58,13 +60,24 @@ class ImgHandle extends AccessHandler{
 	}
 }
 
-
+class ConfigHandle extends AccessHandler{
+	
+	public $TEMPLATE = null;
+	public $CONTEXT = array();
+	
+	function __construct(){
+		$this->TEMPLATE = "core>viewCFG.php";
+		global $__MODULE_CONFIG;
+		$this->CONTEXT['cfg'] = file_get_contents($__MODULE_CONFIG);
+	}
+}
 
 $register = function($mod){
-	$mod->register_handler("^\/(?P<file>css\/.*)$", new CSSHandle(), "CSS");
-	$mod->register_handler("^\/(?P<file>js\/.*)$", new JSHandle(), "JS");
-	$mod->register_handler("^\/(?P<file>img\/.*)$", new ImgHandle(), "IMG");
+	$mod->register_handler("\/css\/(?<root>.*)\/(?P<file>.*)$", new CSSHandle(), "CSS");
+	$mod->register_handler("\/js\/(?<root>.*)\/(?P<file>.*)$", new JSHandle(), "JS");
+	$mod->register_handler("\/(?P<file>img\/.*)$", new ImgHandle(), "IMG");
 	$mod->register_handler("^(noPage)&", new NotFoundHandle(), "404");
+	$mod->register_handler("(^\/core\/view$)", new ConfigHandle(), "CORE");
 }
 
 
